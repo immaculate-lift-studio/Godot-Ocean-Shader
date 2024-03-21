@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://d4mvahmoqcyqj"]
+
+[ext_resource type="Shader" path="res://ocean_surface/ocean_surface.gdshader" id="1_c8j3c"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_mymsq"]
+size = Vector2(200, 200)
+subdivide_width = 100
+subdivide_depth = 100
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_dguy6"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_irps7"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_dguy6")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0g78k"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cktn0"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_0g78k")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3pxpg"]
+render_priority = 0
+shader = ExtResource("1_c8j3c")
+shader_parameter/albedo = Color(0.0941176, 0.266667, 0.45098, 1)
+shader_parameter/albedo2 = Color(0.0901961, 0.0901961, 0.0901961, 1)
+shader_parameter/metallic = 0.0
+shader_parameter/roughness = 0.2
+shader_parameter/wave_direction = Vector2(2, 0)
+shader_parameter/wave_direction2 = Vector2(0, 1)
+shader_parameter/time_scale = 0.025
+shader_parameter/waveSpeed = 0.5
+shader_parameter/waveHeight = 0.5
+shader_parameter/waveFrequency = 18.96
+shader_parameter/texture_normal = SubResource("NoiseTexture2D_irps7")
+shader_parameter/texture_normal2 = SubResource("NoiseTexture2D_cktn0")
+
+[node name="OceanSurface" type="MeshInstance3D"]
+mesh = SubResource("PlaneMesh_mymsq")
+surface_material_override/0 = SubResource("ShaderMaterial_3pxpg")
