@@ -1,46 +1,44 @@
 shader_type spatial;
 
-uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
-uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_nearest;
-
 uniform vec3 albedo : source_color;
-uniform vec3 albedo2 : source_color;
-uniform float metallic : hint_range(0.0, 1.0) = 0;
-uniform float roughness : hint_range(0.0, 1.0) = 0.2;
-uniform sampler2D texture_normal;
-uniform sampler2D texture_normal2;
-uniform vec2 wave_direction = vec2(2.0,0.0);
-uniform vec2 wave_direction2 = vec2(0.0,1.0);
-uniform float time_scale : hint_range(0.0, 0.2, 0.005) = 0.025;
-uniform float waveSpeed = 1.0;
-uniform float waveHeight = 1.0;
-uniform float waveFrequency = 1.0;
-
-float fresnal(float amount, vec3 normal, vec3 view)
-{
-	return pow((1.0 - clamp(dot(normalize(normal), normalize(view)), 0.0, 1.0 )), amount);
-}
+uniform sampler2D water_texture1; // First scrolling water texture
+uniform sampler2D water_texture2; // Second scrolling water texture
+uniform sampler2D noise_texture;  // Noise texture for wave randomness
+uniform vec2 scroll_speed1 = vec2(0.05, 0.0); // Speed of the first texture scrolling
+uniform vec2 scroll_speed2 = vec2(-0.03, 0.0); // Speed of the second texture scrolling
+uniform float blend_factor = 0.5; // Controls the blend between the two textures
+uniform vec2 scale1 = vec2(1.0, 1.0); // Scale of the first texture
+uniform vec2 scale2 = vec2(1.0, 1.0); // Scale of the second texture
+uniform float wave_strength = 1.0; // Controls the height of the waves
+uniform float wave_scale = 0.02; // Scale of the noise for wave generation
+uniform int pixelation_level = 64; // Level of pixelation
 
 void vertex() {
-    // Calculate the wave phase
-    float phase = waveSpeed * TIME;
-    // Apply a sine wave to the vertex position
-    VERTEX.y += sin(VERTEX.x * waveFrequency + phase) * waveHeight;
-    // You can add more complexity by combining multiple sine waves
-    VERTEX.y += sin(VERTEX.z * waveFrequency * 0.5 - phase) * (waveHeight * 0.5);
+    float noise_value = texture(noise_texture, VERTEX.xz * wave_scale).r;
+    float wave = sin((VERTEX.x + VERTEX.z) * 0.2 + TIME + noise_value * 10.0) * wave_strength;
+    VERTEX.y += wave;
 }
-
 
 void fragment() {
-	vec2 time = (TIME * 0.1 * wave_direction) * time_scale;
-	vec2 time2 = (TIME * 0.1 * wave_direction2) * time_scale;
-	float fresnal = fresnal(5.0, NORMAL, VIEW);
-	vec3 surface_color = mix(albedo, albedo2, fresnal);
+    vec2 scaledUV1 = UV * scale1;
+    vec2 scaledUV2 = UV * scale2;
 
-	vec3 normal_blend = mix(texture(texture_normal,UV + time).rgb, texture(texture_normal2,UV + time2).rgb, 0.5);
-	
-	ALBEDO = surface_color;
-	METALLIC = metallic;
-	ROUGHNESS = roughness;
-	NORMAL_MAP = normal_blend;
+    vec2 scrolledUV1 = scaledUV1 + scroll_speed1 * TIME;
+    vec2 scrolledUV2 = scaledUV2 + scroll_speed2 * TIME;
+
+    scrolledUV1 = mod(scrolledUV1, vec2(1.0, 1.0));
+    scrolledUV2 = mod(scrolledUV2, vec2(1.0, 1.0));
+
+    scrolledUV1 = floor(scrolledUV1 * float(pixelation_level)) / float(pixelation_level);
+    scrolledUV2 = floor(scrolledUV2 * float(pixelation_level)) / float(pixelation_level);
+
+    vec4 water_color1 = texture(water_texture1, scrolledUV1);
+    vec4 water_color2 = texture(water_texture2, scrolledUV2);
+
+    vec4 blended_water_color = mix(water_color1, water_color2, blend_factor);
+
+    ALBEDO = blended_water_color.rgb * albedo;
+    METALLIC = 0.0;
+    ROUGHNESS = 1.0;
 }
+
