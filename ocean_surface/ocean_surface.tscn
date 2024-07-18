@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://d4mvahmoqcyqj"]
 
 [ext_resource type="Shader" path="res://ocean_surface/ocean_surface.gdshader" id="1_c8j3c"]
-[ext_resource type="Texture2D" uid="uid://ci7ndwgujaxym" path="res://ocean_surface/water_surface.jpg" id="2_ojrhi"]
+[ext_resource type="Texture2D" uid="uid://cc7bu8k61vqmr" path="res://ocean_surface/clear+sea+water-2048x2048.png" id="2_kor7k"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_mymsq"]
 size = Vector2(200, 200)
@@ -17,7 +17,7 @@ noise = SubResource("FastNoiseLite_j1tav")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3pxpg"]
 render_priority = 0
 shader = ExtResource("1_c8j3c")
-shader_parameter/albedo = Color(0.392157, 0.411765, 0.454902, 1)
+shader_parameter/albedo = Color(0.32416, 0.40887, 0.587068, 1)
 shader_parameter/scroll_speed1 = Vector2(0.015, 0.001)
 shader_parameter/scroll_speed2 = Vector2(-0.015, -0.02)
 shader_parameter/blend_factor = 0.27
@@ -26,8 +26,8 @@ shader_parameter/scale2 = Vector2(3, 3)
 shader_parameter/wave_strength = 0.2
 shader_parameter/wave_scale = 0.02
 shader_parameter/pixelation_level = 256
-shader_parameter/water_texture1 = ExtResource("2_ojrhi")
-shader_parameter/water_texture2 = ExtResource("2_ojrhi")
+shader_parameter/water_texture1 = ExtResource("2_kor7k")
+shader_parameter/water_texture2 = ExtResource("2_kor7k")
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_jvqv0")
 
 [node name="OceanSurface" type="MeshInstance3D"]
