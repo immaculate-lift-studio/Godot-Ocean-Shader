@@ -16,3 +16,6 @@ Remember if you scale up the size, you will need to subdivide the mesh AND raise
 
 ## License
 MIT. I hope this helps somebody in their Godot journey!
+
+
+If you like what I'm doing and want to support me, please [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C8YOTVD)
