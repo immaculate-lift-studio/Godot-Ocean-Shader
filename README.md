@@ -7,6 +7,8 @@ This is a water surface shader for Godot 4 that I am using in my helicopter proj
 * Vertex-based wave displacement based on Godot's fastnoiselite
 
 * Control the level of pixelation in each texture
+  
+* Opacity and edge foam is customizable
 
 Performance: The vertex displacement uses global coordinates, so you can tile multiple smaller meshes so take advantage of camera culling (they will match seamlessly). 
 
